@@ -1,7 +1,4 @@
-#!/usr/bin/python3
-"""Function to query subscribers on a given Reddit subreddit."""
 import requests
-
 
 def number_of_subscribers(subreddit):
     """Return the total number of subscribers on a given subreddit."""
@@ -9,8 +6,16 @@ def number_of_subscribers(subreddit):
     headers = {
         "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
     }
-    response = requests.get(url, headers=headers, allow_redirects=False)
-    if response.status_code == 404:
+
+    try:
+        response = requests.get(url, headers=headers, allow_redirects=False)
+        response.raise_for_status()  # Raise an exception for non-200 status codes
+
+        results = response.json().get("data")
+        subscribers = results.get("subscribers")
+        print(subscribers)  # Print the subscriber count
+        return subscribers
+
+    except requests.exceptions.RequestException as e:
+        print("Error fetching subreddit data:", e)
         return 0
-    results = response.json().get("data")
-    return results.get("subscribers")
