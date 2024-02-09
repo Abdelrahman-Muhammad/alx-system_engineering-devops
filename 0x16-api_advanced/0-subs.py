@@ -1,20 +1,14 @@
 #!/usr/bin/python3
-"""
-Queries the Reddit API and returns the number of total subscribers for a given
-subreddit.
-"""
-import requests
+"""provides a function that queries the Reddit API and
+returns the number of subscribers"""
+import json
+from urllib.request import Request, urlopen
 
 
 def number_of_subscribers(subreddit):
-    """
-    Queries the Reddit API and returns the number of total subscribers for a
-    given subreddit.
-    """
-    url = 'http://www.reddit.com/r/{}/about.json'.format(subreddit)
-    headers = {'User-Agent': 'Python/1.0(Holberton School 0x16 task 0)'}
-    response = requests.get(url, headers=headers)
-    if (not response.ok):
-        return 0
-    subscriber_count = response.json().get('data').get('subscribers')
-    return subscriber_count
+    """returns number of reddit subbredit subscribers"""
+    req = Request(f'https://www.reddit.com/r/{subreddit}/about.json')
+    req.add_header('User-Agent', f'api_advanced_client/python3 (/u/ghost_me')
+    res = urlopen(req)
+    jdata = json.load(res)
+    return jdata.get('data', {}).get('subscribers', 0)
