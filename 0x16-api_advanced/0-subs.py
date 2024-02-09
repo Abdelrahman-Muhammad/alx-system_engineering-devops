@@ -1,21 +1,17 @@
-#!/usr/bin/python3
-""" Exporting csv files"""
-import json
-import requests
-import sys
+import praw
 
+reddit = praw.Reddit(
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET",
+    user_agent="YOUR_USER_AGENT",
+    redirect_uri="YOUR_REDIRECT_URI",
+)
 
 def number_of_subscribers(subreddit):
-    """Read reddit API and return number subscribers """
-    username = 'ledbag123'
-    password = 'Reddit72'
-    user_pass_dict = {'user': username, 'passwd': password, 'api_type': 'json'}
-    headers = {'user-agent': '/u/ledbag123 API Python for Holberton School'}
-    url = 'https://www.reddit.com/r/{}/about.json'.format(subreddit)
-    client = requests.session()
-    client.headers = headers
-    r = client.get(url, allow_redirects=False)
-    if r.status_code == 200:
-        return (r.json()["data"]["subscribers"])
-    else:
-        return(0)
+    try:
+        subreddit = reddit.subreddit(subreddit)
+        return subreddit.subscriber_count
+
+    except praw.exceptions.ClientException as e:
+        print(f"Error fetching subreddit data: {e}")
+        return 0
