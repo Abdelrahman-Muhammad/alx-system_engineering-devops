@@ -1,17 +1,14 @@
-import praw
+#!/usr/bin/python3
+"""provides a function that queries the Reddit API and
+returns the number of subscribers"""
+import json
+from urllib.request import Request, urlopen
 
-reddit = praw.Reddit(
-    client_id="YOUR_CLIENT_ID",
-    client_secret="YOUR_CLIENT_SECRET",
-    user_agent="YOUR_USER_AGENT",
-    redirect_uri="YOUR_REDIRECT_URI",
-)
 
 def number_of_subscribers(subreddit):
-    try:
-        subreddit = reddit.subreddit(subreddit)
-        return subreddit.subscriber_count
-
-    except praw.exceptions.ClientException as e:
-        print(f"Error fetching subreddit data: {e}")
-        return 0
+    """returns number of reddit subbredit subscribers"""
+    req = Request(f'https://www.reddit.com/r/{subreddit}/about.json')
+    req.add_header('User-Agent', f'api_advanced_client/python3 (/u/ghost_me')
+    res = urlopen(req)
+    jdata = json.load(res)
+    return jdata.get('data', {}).get('subscribers', 0)
