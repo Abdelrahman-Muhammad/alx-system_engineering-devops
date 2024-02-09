@@ -1,11 +1,15 @@
-listen 80;
-    server {
-    listen 80;
-    server_name 52.91.126.78 395278-web-01;
-
-    location /airbnb-onepage/ {
-        include proxy_params;
-        proxy_pass http://unix:/home/ubuntu/AirBnB_clone_2/web_flask/airbnb-onepage.sock;
-    }
-
-    ]
+server {
+        listen 80 default_server;
+	listen [::]:80 default_server;
+	add_header X-Served-By "395278-web-01";
+	root /var/www/html;
+	index index.html index.htm;
+	location /airbnb-onepage/ {
+		alias ~/Airbnb_clone_v2/;
+		index index.html index.htm;
+		proxy_pass http://0.0.0.0:5000;
+	}
+	rewrite ^/redirect_me https://github.com/EstephaniaCalvoC/ permanent;
+        error_page 404 /my_404.html;
+        location = /my_404.html {root /usr/share/nginx/html; internal;}
+}
