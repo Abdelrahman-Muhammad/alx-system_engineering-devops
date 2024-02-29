@@ -1,14 +1,16 @@
 #!/usr/bin/python3
-"""provides a function that queries the Reddit API and
-returns the number of subscribers"""
-import json
-from urllib.request import Request, urlopen
+"""Function to query subscribers on a given Reddit subreddit."""
+import requests
 
 
 def number_of_subscribers(subreddit):
-    """returns number of reddit subbredit subscribers"""
-    req = Request(f'https://www.reddit.com/r/{subreddit}/about.json')
-    req.add_header('User-Agent', f'api_advanced_client/python3 (/u/ghost_me')
-    res = urlopen(req)
-    jdata = json.load(res)
-    return jdata.get('data', {}).get('subscribers', 0)
+    """Return the total number of subscribers on a given subreddit."""
+    url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
+    headers = {
+        "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
+    }
+    response = requests.get(url, headers=headers, allow_redirects=False)
+    if response.status_code == 404:
+        return 0
+    results = response.json().get("data")
+    return results.get("subscribers")
